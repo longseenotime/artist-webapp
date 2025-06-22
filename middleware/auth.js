@@ -4,7 +4,7 @@ const bcrypt = require('bcryptjs');
 // In production, use proper session storage
 const adminCredentials = {
     username: 'admin',
-    password: '$2a$10$8K1p/a0dQ2HsIkH2QJWJMe4RzGQKu4J5tYm5Q4X4Q2rK1S4X2Y4K2' // 'admin123'
+    password: '$2a$10$srLgj.oBr3nM22eDlh0oEuqoKP/bAYc1bEs1uT6BkHxTDCgzCKl0q' // 'admin123'
 };
 
 // Middleware to check if user is authenticated
