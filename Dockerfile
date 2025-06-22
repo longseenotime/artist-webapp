@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production
+# Install all dependencies (including dev dependencies for build)
+RUN npm ci
 
 # Copy application code
 COPY . .
@@ -21,6 +21,9 @@ RUN chmod 755 public/uploads
 
 # Build Tailwind CSS
 RUN npx tailwindcss -i ./public/css/input.css -o ./public/css/style.css --minify
+
+# Remove dev dependencies for smaller image
+RUN npm prune --production
 
 # Expose port
 EXPOSE 3000
