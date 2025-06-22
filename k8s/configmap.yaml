@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: artist-webapp-config
+  labels:
+    app: artist-webapp
+data:
+  NODE_ENV: "production"
+  PORT: "3000"
