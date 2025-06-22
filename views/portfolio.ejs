@@ -1,0 +1,213 @@
+<%- include('partials/header', { title: 'Portfolio', currentPage: 'portfolio' }) %>
+
+<section class="pt-24 pb-16 bg-gradient-to-br from-sage-50 to-stone-warm-100">
+    <div class="container">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl lg:text-6xl font-serif font-light text-stone-warm-900 mb-6">
+                Portfolio
+            </h1>
+            <p class="text-xl text-stone-warm-600 max-w-2xl mx-auto">
+                A collection of works spanning various mediums and artistic explorations, each piece telling its own unique story.
+            </p>
+        </div>
+        
+        <!-- Filter Buttons -->
+        <div class="flex flex-wrap justify-center gap-4 mb-12">
+            <button class="filter-btn <%= currentCategory === 'all' ? 'active' : '' %>" data-filter="all">
+                All Works
+            </button>
+            <button class="filter-btn <%= currentCategory === 'paintings' ? 'active' : '' %>" data-filter="paintings">
+                Paintings
+            </button>
+            <button class="filter-btn <%= currentCategory === 'digital' ? 'active' : '' %>" data-filter="digital">
+                Digital Art
+            </button>
+            <button class="filter-btn <%= currentCategory === 'sculptures' ? 'active' : '' %>" data-filter="sculptures">
+                Sculptures
+            </button>
+        </div>
+    </div>
+</section>
+
+<section class="pb-16 bg-white">
+    <div class="container">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="portfolio-grid">
+            <% artworks.forEach((artwork, index) => { %>
+            <div class="artwork-card opacity-0 animate-fade-in" 
+                 data-category="<%= artwork.category %>" 
+                 style="animation-delay: <%= index * 100 %>ms;">
+                <div class="aspect-square overflow-hidden">
+                    <img src="<%= artwork.image %>" 
+                         alt="<%= artwork.title %>" 
+                         class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 cursor-pointer"
+                         onclick="openLightbox('<%= artwork.image %>', '<%= artwork.title %>', '<%= artwork.medium %>, <%= artwork.year %>', '<%= artwork.description %>')">
+                </div>
+                <div class="p-6">
+                    <h3 class="text-2xl font-serif font-medium text-stone-warm-900 mb-2">
+                        <%= artwork.title %>
+                    </h3>
+                    <p class="text-stone-warm-600 mb-3">
+                        <%= artwork.medium %>, <%= artwork.year %>
+                    </p>
+                    <p class="text-stone-warm-500 leading-relaxed">
+                        <%= artwork.description %>
+                    </p>
+                    <div class="mt-4 pt-4 border-t border-stone-warm-100">
+                        <span class="inline-block bg-<%= artwork.category === 'paintings' ? 'sage' : artwork.category === 'digital' ? 'muted-blue' : 'stone-warm' %>-100 text-<%= artwork.category === 'paintings' ? 'sage' : artwork.category === 'digital' ? 'muted-blue' : 'stone-warm' %>-700 px-3 py-1 rounded-full text-sm font-medium capitalize">
+                            <%= artwork.category.replace('s', '') %>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <% }); %>
+        </div>
+        
+        <% if (artworks.length === 0) { %>
+        <div class="text-center py-16">
+            <div class="w-24 h-24 bg-stone-warm-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-12 h-12 text-stone-warm-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+            </div>
+            <h3 class="text-2xl font-serif text-stone-warm-900 mb-4">No works found</h3>
+            <p class="text-stone-warm-600 mb-6">Try selecting a different category or view all works.</p>
+            <a href="/portfolio" class="btn-primary">View All Works</a>
+        </div>
+        <% } %>
+    </div>
+</section>
+
+<!-- Lightbox Modal -->
+<div id="lightbox" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+    <div class="relative max-w-4xl max-h-[90vh] w-full">
+        <button onclick="closeLightbox()" 
+                class="absolute top-4 right-4 text-white hover:text-sage-400 transition-colors z-10">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+        </button>
+        
+        <div class="bg-white rounded-2xl overflow-hidden shadow-2xl">
+            <div class="aspect-square bg-stone-warm-100">
+                <img id="lightbox-image" src="" alt="" class="w-full h-full object-contain">
+            </div>
+            <div class="p-8">
+                <h3 id="lightbox-title" class="text-3xl font-serif font-medium text-stone-warm-900 mb-2"></h3>
+                <p id="lightbox-medium" class="text-stone-warm-600 mb-4"></p>
+                <p id="lightbox-description" class="text-stone-warm-500 leading-relaxed"></p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<section class="section-padding bg-gradient-to-r from-sage-600 to-muted-blue-600 text-white">
+    <div class="container text-center">
+        <h2 class="text-4xl lg:text-5xl font-serif font-light mb-6">
+            Interested in a Custom Piece?
+        </h2>
+        <p class="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+            Each artwork is crafted with passion and attention to detail. Let's create something unique for your space.
+        </p>
+        <a href="/contact" class="bg-white text-sage-600 hover:bg-stone-warm-50 font-medium py-4 px-8 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+            Commission Custom Art
+        </a>
+    </div>
+</section>
+
+<style>
+.filter-btn {
+    @apply px-6 py-3 rounded-full border-2 border-sage-600 text-sage-600 hover:bg-sage-600 hover:text-white transition-all duration-300 font-medium;
+}
+
+.filter-btn.active {
+    @apply bg-sage-600 text-white;
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.6s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+</style>
+
+<script>
+// Filter functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const artworks = document.querySelectorAll('.artwork-card');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const filter = this.dataset.filter;
+            
+            // Update active button
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            // Update URL
+            const url = new URL(window.location);
+            if (filter === 'all') {
+                url.searchParams.delete('category');
+            } else {
+                url.searchParams.set('category', filter);
+            }
+            window.history.pushState({}, '', url);
+            
+            // Filter artworks
+            artworks.forEach((artwork, index) => {
+                const category = artwork.dataset.category;
+                if (filter === 'all' || category === filter) {
+                    artwork.style.display = 'block';
+                    artwork.style.animationDelay = `${index * 100}ms`;
+                    artwork.classList.add('animate-fade-in');
+                } else {
+                    artwork.style.display = 'none';
+                }
+            });
+        });
+    });
+});
+
+// Lightbox functionality
+function openLightbox(src, title, medium, description) {
+    document.getElementById('lightbox-image').src = src;
+    document.getElementById('lightbox-title').textContent = title;
+    document.getElementById('lightbox-medium').textContent = medium;
+    document.getElementById('lightbox-description').textContent = description;
+    document.getElementById('lightbox').classList.remove('hidden');
+    document.getElementById('lightbox').classList.add('flex');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeLightbox() {
+    document.getElementById('lightbox').classList.add('hidden');
+    document.getElementById('lightbox').classList.remove('flex');
+    document.body.style.overflow = 'auto';
+}
+
+// Close lightbox on backdrop click
+document.getElementById('lightbox').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeLightbox();
+    }
+});
+
+// Close lightbox on escape key
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeLightbox();
+    }
+});
+</script>
+
+<%- include('partials/footer') %>

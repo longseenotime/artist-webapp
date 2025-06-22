@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title + ' - ' : '' %>Artist Studio</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎨</text></svg>">
+</head>
+<body class="min-h-screen bg-stone-warm-50">
+    <nav class="fixed top-0 left-0 right-0 z-50 bg-white/90 backdrop-blur-md border-b border-stone-warm-100">
+        <div class="container">
+            <div class="flex items-center justify-between h-16">
+                <a href="/" class="flex items-center space-x-2 group">
+                    <div class="w-8 h-8 bg-sage-600 rounded-lg flex items-center justify-center group-hover:bg-sage-700 transition-colors">
+                        <span class="text-white font-bold text-sm">A</span>
+                    </div>
+                    <span class="font-serif font-semibold text-xl text-stone-warm-900">Artist Studio</span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="/" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'home' ? 'active' : '' %>">Home</a>
+                    <a href="/portfolio" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'portfolio' ? 'active' : '' %>">Portfolio</a>
+                    <a href="/about" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'about' ? 'active' : '' %>">About</a>
+                    <a href="/services" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'services' ? 'active' : '' %>">Services</a>
+                    <a href="/contact" class="nav-link <%= typeof currentPage !== 'undefined' && currentPage === 'contact' ? 'active' : '' %>">Contact</a>
+                </div>
+
+                <button class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-stone-warm-100 transition-colors" id="mobile-menu-btn">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+            
+            <div class="md:hidden hidden bg-white border-t border-stone-warm-100" id="mobile-menu">
+                <div class="py-4 space-y-3">
+                    <a href="/" class="block py-2 text-stone-warm-600 hover:text-sage-600 transition-colors">Home</a>
+                    <a href="/portfolio" class="block py-2 text-stone-warm-600 hover:text-sage-600 transition-colors">Portfolio</a>
+                    <a href="/about" class="block py-2 text-stone-warm-600 hover:text-sage-600 transition-colors">About</a>
+                    <a href="/services" class="block py-2 text-stone-warm-600 hover:text-sage-600 transition-colors">Services</a>
+                    <a href="/contact" class="block py-2 text-stone-warm-600 hover:text-sage-600 transition-colors">Contact</a>
+                </div>
+            </div>
+        </div>
+    </nav>

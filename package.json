@@ -1,0 +1,27 @@
+{
+  "name": "artist-webapp",
+  "version": "1.0.0",
+  "description": "Modern artist business web application",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js",
+    "build-css": "tailwindcss -i ./public/css/input.css -o ./public/css/style.css --watch",
+    "screenshot": "node scripts/screenshot.js"
+  },
+  "keywords": ["artist", "portfolio", "webapp", "express", "tailwind"],
+  "author": "Artist Studio",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "ejs": "^3.1.9",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "tailwindcss": "^3.3.5",
+    "puppeteer": "^21.3.8",
+    "@tailwindcss/forms": "^0.5.6"
+  }
+}

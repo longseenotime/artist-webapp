@@ -1,0 +1,230 @@
+<%- include('partials/header', { title: 'Services', currentPage: 'services' }) %>
+
+<section class="pt-24 pb-16 bg-gradient-to-br from-sage-50 to-stone-warm-100">
+    <div class="container">
+        <div class="text-center mb-12">
+            <h1 class="text-5xl lg:text-6xl font-serif font-light text-stone-warm-900 mb-6">
+                Services
+            </h1>
+            <p class="text-xl text-stone-warm-600 max-w-2xl mx-auto">
+                Bringing your artistic vision to life through personalized commissions, workshops, and creative collaborations.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding bg-white">
+    <div class="container">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <% services.forEach((service, index) => { %>
+            <div class="card p-8 group hover:shadow-xl transition-all duration-500" style="animation-delay: <%= index * 150 %>ms;">
+                <div class="flex items-start justify-between mb-6">
+                    <div class="w-16 h-16 bg-<%= index % 3 === 0 ? 'sage' : index % 3 === 1 ? 'muted-blue' : 'stone-warm' %>-100 rounded-xl flex items-center justify-center group-hover:bg-<%= index % 3 === 0 ? 'sage' : index % 3 === 1 ? 'muted-blue' : 'stone-warm' %>-200 transition-colors">
+                        <svg class="w-8 h-8 text-<%= index % 3 === 0 ? 'sage' : index % 3 === 1 ? 'muted-blue' : 'stone-warm' %>-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <% if (index % 4 === 0) { %>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            <% } else if (index % 4 === 1) { %>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4h4a4 4 0 004-4V5z"></path>
+                            <% } else if (index % 4 === 2) { %>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            <% } else { %>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                            <% } %>
+                        </svg>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-3xl font-bold text-<%= index % 3 === 0 ? 'sage' : index % 3 === 1 ? 'muted-blue' : 'stone-warm' %>-600">
+                            <%= service.price %>
+                        </p>
+                    </div>
+                </div>
+                
+                <h3 class="text-3xl font-serif font-medium text-stone-warm-900 mb-4">
+                    <%= service.title %>
+                </h3>
+                <p class="text-stone-warm-600 mb-6 leading-relaxed text-lg">
+                    <%= service.description %>
+                </p>
+                
+                <div class="space-y-3 mb-6">
+                    <h4 class="font-semibold text-stone-warm-900">What's included:</h4>
+                    <ul class="space-y-2">
+                        <% service.features.forEach(feature => { %>
+                        <li class="flex items-center space-x-3 text-stone-warm-600">
+                            <svg class="w-5 h-5 text-<%= index % 3 === 0 ? 'sage' : index % 3 === 1 ? 'muted-blue' : 'stone-warm' %>-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            <span><%= feature %></span>
+                        </li>
+                        <% }); %>
+                    </ul>
+                </div>
+                
+                <a href="/contact" class="block w-full text-center btn-<%= index % 2 === 0 ? 'primary' : 'secondary' %>">
+                    Get Started
+                </a>
+            </div>
+            <% }); %>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding bg-gradient-to-r from-sage-50 to-muted-blue-50">
+    <div class="container">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl lg:text-5xl font-serif font-light text-stone-warm-900 mb-6">
+                The Commission Process
+            </h2>
+            <p class="text-xl text-stone-warm-600 max-w-3xl mx-auto">
+                From initial concept to final delivery, here's how we'll bring your artistic vision to life.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
+            <div class="text-center space-y-4">
+                <div class="w-16 h-16 bg-sage-600 rounded-full flex items-center justify-center mx-auto">
+                    <span class="text-white font-bold text-xl">1</span>
+                </div>
+                <h3 class="text-xl font-serif font-medium text-stone-warm-900">
+                    Initial Consultation
+                </h3>
+                <p class="text-stone-warm-600 text-sm leading-relaxed">
+                    We discuss your vision, preferences, and requirements to understand exactly what you're looking for.
+                </p>
+            </div>
+            
+            <div class="text-center space-y-4">
+                <div class="w-16 h-16 bg-muted-blue-600 rounded-full flex items-center justify-center mx-auto">
+                    <span class="text-white font-bold text-xl">2</span>
+                </div>
+                <h3 class="text-xl font-serif font-medium text-stone-warm-900">
+                    Proposal & Quote
+                </h3>
+                <p class="text-stone-warm-600 text-sm leading-relaxed">
+                    Receive a detailed proposal with timeline, pricing, and project specifications tailored to your needs.
+                </p>
+            </div>
+            
+            <div class="text-center space-y-4">
+                <div class="w-16 h-16 bg-stone-warm-600 rounded-full flex items-center justify-center mx-auto">
+                    <span class="text-white font-bold text-xl">3</span>
+                </div>
+                <h3 class="text-xl font-serif font-medium text-stone-warm-900">
+                    Concept Development
+                </h3>
+                <p class="text-stone-warm-600 text-sm leading-relaxed">
+                    I create initial sketches and concepts for your approval before moving to the final piece.
+                </p>
+            </div>
+            
+            <div class="text-center space-y-4">
+                <div class="w-16 h-16 bg-sage-700 rounded-full flex items-center justify-center mx-auto">
+                    <span class="text-white font-bold text-xl">4</span>
+                </div>
+                <h3 class="text-xl font-serif font-medium text-stone-warm-900">
+                    Creation Process
+                </h3>
+                <p class="text-stone-warm-600 text-sm leading-relaxed">
+                    The artwork comes to life with regular progress updates and opportunities for feedback.
+                </p>
+            </div>
+            
+            <div class="text-center space-y-4">
+                <div class="w-16 h-16 bg-muted-blue-700 rounded-full flex items-center justify-center mx-auto">
+                    <span class="text-white font-bold text-xl">5</span>
+                </div>
+                <h3 class="text-xl font-serif font-medium text-stone-warm-900">
+                    Delivery & Care
+                </h3>
+                <p class="text-stone-warm-600 text-sm leading-relaxed">
+                    Final approval, professional packaging, and delivery with care instructions for your new artwork.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding bg-white">
+    <div class="container">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+                <h2 class="text-4xl lg:text-5xl font-serif font-light text-stone-warm-900 mb-6">
+                    Frequently Asked Questions
+                </h2>
+                <p class="text-xl text-stone-warm-600 mb-8">
+                    Everything you need to know about commissioning custom artwork.
+                </p>
+                
+                <div class="space-y-6">
+                    <div class="border-b border-stone-warm-100 pb-6">
+                        <h3 class="text-lg font-semibold text-stone-warm-900 mb-2">
+                            How long does a commission take?
+                        </h3>
+                        <p class="text-stone-warm-600">
+                            Timeline varies by project complexity and size. Most paintings take 4-8 weeks, while digital pieces can be completed in 2-4 weeks. Rush orders may be available for an additional fee.
+                        </p>
+                    </div>
+                    
+                    <div class="border-b border-stone-warm-100 pb-6">
+                        <h3 class="text-lg font-semibold text-stone-warm-900 mb-2">
+                            What if I'm not satisfied with the result?
+                        </h3>
+                        <p class="text-stone-warm-600">
+                            Client satisfaction is my priority. I include multiple revision rounds in every commission, and we'll work together until you're completely happy with your piece.
+                        </p>
+                    </div>
+                    
+                    <div class="border-b border-stone-warm-100 pb-6">
+                        <h3 class="text-lg font-semibold text-stone-warm-900 mb-2">
+                            Do you work from photographs?
+                        </h3>
+                        <p class="text-stone-warm-600">
+                            Yes! I can work from your photographs, combining multiple references if needed. High-resolution images work best for detailed commissions.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-stone-warm-900 mb-2">
+                            What about international shipping?
+                        </h3>
+                        <p class="text-stone-warm-600">
+                            I ship worldwide with professional packaging and insurance. International shipping costs and customs duties are additional and vary by location.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="relative">
+                <div class="aspect-square rounded-2xl overflow-hidden shadow-xl">
+                    <img src="https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&h=600&fit=crop" 
+                         alt="Artist working on commission" 
+                         class="w-full h-full object-cover">
+                </div>
+                <div class="absolute inset-0 bg-gradient-to-t from-stone-warm-900/20 to-transparent rounded-2xl"></div>
+                <div class="absolute -top-6 -left-6 w-24 h-24 bg-sage-200 rounded-full opacity-40"></div>
+                <div class="absolute -bottom-6 -right-6 w-16 h-16 bg-muted-blue-300 rounded-full opacity-60"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding bg-stone-warm-900 text-white">
+    <div class="container text-center">
+        <h2 class="text-4xl lg:text-5xl font-serif font-light mb-6">
+            Ready to Start Your Commission?
+        </h2>
+        <p class="text-xl text-stone-warm-300 mb-8 max-w-2xl mx-auto">
+            Let's discuss your project and create something beautiful together. Every commission begins with a conversation.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <a href="/contact" class="bg-sage-600 hover:bg-sage-700 text-white font-medium py-4 px-8 rounded-lg transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5">
+                Get Your Quote
+            </a>
+            <a href="/portfolio" class="border-2 border-stone-warm-600 text-stone-warm-300 hover:bg-stone-warm-800 hover:border-stone-warm-500 font-medium py-4 px-8 rounded-lg transition-all duration-300">
+                View Examples
+            </a>
+        </div>
+    </div>
+</section>
+
+<%- include('partials/footer') %>
