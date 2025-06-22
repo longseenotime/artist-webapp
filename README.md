@@ -57,20 +57,23 @@ A modern, responsive web application for artists to showcase and sell their work
 
 ## Docker Deployment
 
-### Building the Image
+### Option 1: Using Pre-built Image (Recommended for Production)
 
 ```bash
-# Build the Docker image
-docker build -t artist-webapp .
+# Using the pre-built image from GitHub Container Registry
+docker-compose -f docker-compose.prod.yml up -d
 
-# Run the container
-docker run -p 3000:3000 -v $(pwd)/data:/app/data -v $(pwd)/public/uploads:/app/public/uploads artist-webapp
+# View logs
+docker-compose -f docker-compose.prod.yml logs -f
+
+# Stop the application
+docker-compose -f docker-compose.prod.yml down
 ```
 
-### Using Docker Compose (Recommended)
+### Option 2: Build Locally
 
 ```bash
-# Start the application
+# Build and start the application locally
 docker-compose up -d
 
 # View logs
@@ -79,6 +82,26 @@ docker-compose logs -f
 # Stop the application
 docker-compose down
 ```
+
+### Option 3: Manual Docker Commands
+
+```bash
+# Pull the pre-built image
+docker pull ghcr.io/longseenotime/artist-webapp:latest
+
+# Run the container
+docker run -p 3000:3000 \
+  -v $(pwd)/data:/app/data \
+  -v $(pwd)/public/uploads:/app/public/uploads \
+  ghcr.io/longseenotime/artist-webapp:latest
+```
+
+## GitHub Container Registry
+
+The application is automatically built and published to GitHub Container Registry:
+- **Image URL**: `ghcr.io/longseenotime/artist-webapp:latest`
+- **Automatic builds**: Every push to main branch triggers a new build
+- **Multi-platform**: Supports both AMD64 and ARM64 architectures
 
 ## Admin Panel Features
 

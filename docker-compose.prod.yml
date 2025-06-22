@@ -2,11 +2,8 @@ version: '3.8'
 
 services:
   artist-webapp:
-    # Option 1: Build locally
-    build: .
-    
-    # Option 2: Use pre-built image from GitHub Container Registry
-    # image: ghcr.io/longseenotime/artist-webapp:latest
+    # Use pre-built image from GitHub Container Registry
+    image: ghcr.io/longseenotime/artist-webapp:latest
     
     ports:
       - "3000:3000"
