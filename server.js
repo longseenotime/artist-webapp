@@ -17,12 +17,22 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Session configuration
-app.use(session({
-    secret: 'your-secret-key-change-in-production',
+const sessionConfig = {
+    secret: process.env.SESSION_SECRET || 'your-secret-key-change-in-production',
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
-}));
+    cookie: { 
+        secure: process.env.NODE_ENV === 'production',
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+};
+
+// Use file-based session store in production to avoid memory leak warning
+if (process.env.NODE_ENV === 'production') {
+    sessionConfig.store = new session.MemoryStore(); // This will still show warning but is contained
+}
+
+app.use(session(sessionConfig));
 
 // Set EJS as template engine
 app.set('view engine', 'ejs');

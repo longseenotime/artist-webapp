@@ -13,25 +13,24 @@ RUN npm ci
 # Copy application code
 COPY . .
 
-# Create necessary directories
-RUN mkdir -p data public/uploads
-
-# Set permissions for uploads directory
-RUN chmod 755 public/uploads
-
 # Build Tailwind CSS
 RUN npx tailwindcss -i ./public/css/input.css -o ./public/css/style.css --minify
 
 # Remove dev dependencies for smaller image
 RUN npm prune --production
 
-# Expose port
-EXPOSE 3000
-
 # Create non-root user for security
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S artist -u 1001
+
+# Create necessary directories and set ownership
+RUN mkdir -p data public/uploads
 RUN chown -R artist:nodejs /app
+RUN chmod -R 755 /app/data /app/public/uploads
+
+# Expose port
+EXPOSE 3000
+
 USER artist
 
 # Health check
