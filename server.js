@@ -2,6 +2,10 @@ const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const session = require('express-session');
+const database = require('./models/database');
+const { requireAuth, login } = require('./middleware/auth');
+const upload = require('./middleware/upload');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,9 +16,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Session configuration
+app.use(session({
+    secret: 'your-secret-key-change-in-production',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: false, maxAge: 24 * 60 * 60 * 1000 } // 24 hours
+}));
+
 // Set EJS as template engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+
+// Initialize database
+database.connect().catch(console.error);
 
 // Sample data
 const artworks = [
@@ -102,31 +117,51 @@ const services = [
 ];
 
 // Routes
-app.get('/', (req, res) => {
-    res.render('index', { 
-        artworks: artworks.slice(0, 4), 
-        services: services.slice(0, 3) 
-    });
-});
-
-app.get('/portfolio', (req, res) => {
-    const category = req.query.category || 'all';
-    const filteredArtworks = category === 'all' 
-        ? artworks 
-        : artworks.filter(art => art.category === category);
-    
-    res.render('portfolio', { 
-        artworks: filteredArtworks, 
-        currentCategory: category 
-    });
-});
-
-app.get('/artwork/:id', (req, res) => {
-    const artwork = artworks.find(art => art.id == req.params.id);
-    if (!artwork) {
-        return res.status(404).render('404');
+app.get('/', async (req, res) => {
+    try {
+        const featuredArtworks = await database.getFeaturedPaintings();
+        res.render('index', { 
+            artworks: featuredArtworks, 
+            services: services.slice(0, 3) 
+        });
+    } catch (error) {
+        console.error('Error fetching featured artworks:', error);
+        res.render('index', { 
+            artworks: [], 
+            services: services.slice(0, 3) 
+        });
     }
-    res.render('artwork', { artwork });
+});
+
+app.get('/portfolio', async (req, res) => {
+    try {
+        const category = req.query.category || 'all';
+        const artworks = await database.getPaintingsByCategory(category);
+        
+        res.render('portfolio', { 
+            artworks: artworks, 
+            currentCategory: category 
+        });
+    } catch (error) {
+        console.error('Error fetching portfolio:', error);
+        res.render('portfolio', { 
+            artworks: [], 
+            currentCategory: 'all' 
+        });
+    }
+});
+
+app.get('/artwork/:id', async (req, res) => {
+    try {
+        const artwork = await database.getPaintingById(req.params.id);
+        if (!artwork) {
+            return res.status(404).render('404');
+        }
+        res.render('artwork', { artwork });
+    } catch (error) {
+        console.error('Error fetching artwork:', error);
+        res.status(404).render('404');
+    }
 });
 
 app.get('/about', (req, res) => {
@@ -155,13 +190,143 @@ app.post('/api/contact', (req, res) => {
     });
 });
 
-app.get('/api/artworks', (req, res) => {
-    const category = req.query.category;
-    const filteredArtworks = category && category !== 'all'
-        ? artworks.filter(art => art.category === category)
-        : artworks;
+app.get('/api/artworks', async (req, res) => {
+    try {
+        const category = req.query.category;
+        const artworks = await database.getPaintingsByCategory(category || 'all');
+        res.json(artworks);
+    } catch (error) {
+        console.error('Error fetching artworks API:', error);
+        res.status(500).json({ error: 'Failed to fetch artworks' });
+    }
+});
+
+// Admin Routes
+app.get('/admin/login', (req, res) => {
+    if (req.session && req.session.authenticated) {
+        return res.redirect('/admin/dashboard');
+    }
+    res.render('admin/login', { error: null });
+});
+
+app.post('/admin/login', async (req, res) => {
+    const { username, password } = req.body;
     
-    res.json(filteredArtworks);
+    try {
+        const isValid = await login(username, password);
+        if (isValid) {
+            req.session.authenticated = true;
+            req.session.username = username;
+            res.redirect('/admin/dashboard');
+        } else {
+            res.render('admin/login', { error: 'Invalid credentials' });
+        }
+    } catch (error) {
+        console.error('Login error:', error);
+        res.render('admin/login', { error: 'Login failed' });
+    }
+});
+
+app.get('/admin/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/admin/login');
+});
+
+app.get('/admin/dashboard', requireAuth, async (req, res) => {
+    try {
+        const paintings = await database.getAllPaintings();
+        res.render('admin/dashboard', { 
+            paintings,
+            username: req.session.username 
+        });
+    } catch (error) {
+        console.error('Error fetching paintings for dashboard:', error);
+        res.render('admin/dashboard', { 
+            paintings: [],
+            username: req.session.username 
+        });
+    }
+});
+
+app.get('/admin/paintings/new', requireAuth, (req, res) => {
+    res.render('admin/painting-form', { 
+        painting: null,
+        action: 'add',
+        username: req.session.username 
+    });
+});
+
+app.get('/admin/paintings/:id/edit', requireAuth, async (req, res) => {
+    try {
+        const painting = await database.getPaintingById(req.params.id);
+        if (!painting) {
+            return res.status(404).send('Painting not found');
+        }
+        res.render('admin/painting-form', { 
+            painting,
+            action: 'edit',
+            username: req.session.username 
+        });
+    } catch (error) {
+        console.error('Error fetching painting for edit:', error);
+        res.status(500).send('Error loading painting');
+    }
+});
+
+app.post('/admin/paintings', requireAuth, upload.single('image'), async (req, res) => {
+    try {
+        const paintingData = {
+            title: req.body.title,
+            description: req.body.description,
+            medium: req.body.medium,
+            year: parseInt(req.body.year),
+            category: req.body.category,
+            price: parseFloat(req.body.price),
+            dimensions: req.body.dimensions,
+            availability: req.body.availability,
+            featured: req.body.featured ? 1 : 0,
+            image_url: req.file ? `/uploads/${req.file.filename}` : req.body.existing_image_url || ''
+        };
+
+        await database.addPainting(paintingData);
+        res.redirect('/admin/dashboard?success=added');
+    } catch (error) {
+        console.error('Error adding painting:', error);
+        res.status(500).send('Error adding painting');
+    }
+});
+
+app.post('/admin/paintings/:id', requireAuth, upload.single('image'), async (req, res) => {
+    try {
+        const paintingData = {
+            title: req.body.title,
+            description: req.body.description,
+            medium: req.body.medium,
+            year: parseInt(req.body.year),
+            category: req.body.category,
+            price: parseFloat(req.body.price),
+            dimensions: req.body.dimensions,
+            availability: req.body.availability,
+            featured: req.body.featured ? 1 : 0,
+            image_url: req.file ? `/uploads/${req.file.filename}` : req.body.existing_image_url || ''
+        };
+
+        await database.updatePainting(req.params.id, paintingData);
+        res.redirect('/admin/dashboard?success=updated');
+    } catch (error) {
+        console.error('Error updating painting:', error);
+        res.status(500).send('Error updating painting');
+    }
+});
+
+app.delete('/admin/paintings/:id', requireAuth, async (req, res) => {
+    try {
+        await database.deletePainting(req.params.id);
+        res.json({ success: true });
+    } catch (error) {
+        console.error('Error deleting painting:', error);
+        res.status(500).json({ error: 'Error deleting painting' });
+    }
 });
 
 // 404 handler
